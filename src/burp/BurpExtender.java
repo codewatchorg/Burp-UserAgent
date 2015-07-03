@@ -1,6 +1,6 @@
 /*
  * Name:           Burp UserAgent
- * Version:        0.2
+ * Version:        0.3
  * Date:           7/1/2015
  * Author:         Josh Berry - josh.berry@codewatch.org
  * Github:         https://github.com/codewatchorg/BurpUserAgent
@@ -32,9 +32,10 @@ public class BurpExtender implements IBurpExtender, ISessionHandlingAction, ITab
   public IBurpExtenderCallbacks extCallbacks;
   public IExtensionHelpers extHelpers;
   public JPanel bUAPanel;
-  private static final String burpUAVersion = "0.2";
+  private static final String burpUAVersion = "0.3";
   private PrintWriter printOut;
   private String newUA = "Current Browser";
+  private int totalAgents = 0;
   private final HashMap<String, String> bUserAgentNames = new HashMap();
   private final ArrayList<String> bUserAgents = new ArrayList<String>();
 
@@ -60,6 +61,7 @@ public class BurpExtender implements IBurpExtender, ISessionHandlingAction, ITab
                             !attributes.getValue(0).isEmpty() && !attributes.getValue(1).isEmpty()) {
                         bUserAgents.add(attributes.getValue(0));
                         bUserAgentNames.put(attributes.getValue(0), attributes.getValue(1));
+                        totalAgents = totalAgents + 1;
                     }
                 }
             }
@@ -80,18 +82,19 @@ public class BurpExtender implements IBurpExtender, ISessionHandlingAction, ITab
     extCallbacks.setExtensionName("Burp UserAgent");
     extCallbacks.registerSessionHandlingAction(this);
     printOut = new PrintWriter(extCallbacks.getStdout(), true);
+    printHeader();
     
     /* Create the default User-Agent and then load the rest */
     bUserAgents.add("Current Browser");
     bUserAgentNames.put("Current Browser", "Current Browser");
     loadXML();
+    printOut.println("Total Loaded Agents: " + String.valueOf(totalAgents));
     
     /* Create a tab to configure User-Agent header values */
     bUAPanel = new JPanel(null);
     JLabel bUALabel = new JLabel();
     final JComboBox bUACbx = new JComboBox(bUserAgents.toArray());
     JButton bUASetHeaderBtn = new JButton("Set Configuration");
-    printHeader();
     
     /* Set values for the label and User-Agent combo box */
     bUALabel.setText("User-Agent:");
@@ -121,8 +124,8 @@ public class BurpExtender implements IBurpExtender, ISessionHandlingAction, ITab
   
   /* Print to extension output tab */
   public void printHeader() {
-      printOut.println("Burp UserAgent: v" + burpUAVersion + "\n==================\nChange the User-Agent header on requests to a specified value.\n\n"
-              + "josh.berry@codewatch.org");
+      printOut.println("Burp UserAgent: v" + burpUAVersion + "\n====================\nChange the User-Agent header on requests to a specified value.\n\n"
+              + "josh.berry@codewatch.org\n\n");
   }
   
   /* Tab caption */
