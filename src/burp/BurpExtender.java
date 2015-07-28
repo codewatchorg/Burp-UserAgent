@@ -1,6 +1,6 @@
 /*
  * Name:           Burp UserAgent
- * Version:        0.3
+ * Version:        0.4
  * Date:           7/1/2015
  * Author:         Josh Berry - josh.berry@codewatch.org
  * Github:         https://github.com/codewatchorg/BurpUserAgent
@@ -32,7 +32,7 @@ public class BurpExtender implements IBurpExtender, ISessionHandlingAction, ITab
   public IBurpExtenderCallbacks extCallbacks;
   public IExtensionHelpers extHelpers;
   public JPanel bUAPanel;
-  private static final String burpUAVersion = "0.3";
+  private static final String burpUAVersion = "0.4";
   private PrintWriter printOut;
   private String newUA = "Current Browser";
   private String configFile = "useragents.xml";
