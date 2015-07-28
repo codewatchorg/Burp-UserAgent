@@ -3,7 +3,7 @@
  * Version:        0.4
  * Date:           7/1/2015
  * Author:         Josh Berry - josh.berry@codewatch.org
- * Github:         https://github.com/codewatchorg/BurpUserAgent
+ * Github:         https://github.com/codewatchorg/Burp-UserAgent
  * 
  * Description:    This plugin modifies requests, changing the User-Agent header to match the selected browser.
  * 
