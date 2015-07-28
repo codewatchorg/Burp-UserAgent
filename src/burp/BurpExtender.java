@@ -35,12 +35,13 @@ public class BurpExtender implements IBurpExtender, ISessionHandlingAction, ITab
   private static final String burpUAVersion = "0.3";
   private PrintWriter printOut;
   private String newUA = "Current Browser";
+  private String configFile = "useragents.xml";
   private int totalAgents = 0;
   private final HashMap<String, String> bUserAgentNames = new HashMap();
   private final ArrayList<String> bUserAgents = new ArrayList<String>();
 
   /* function for loading XML file of user agents */
-  public void loadXML() {
+  public void loadXML(String xmlConfig) {
  
     /* setup the SAX parser */
     try {
@@ -68,7 +69,7 @@ public class BurpExtender implements IBurpExtender, ISessionHandlingAction, ITab
         };
  
         /* process the XML file */
-        saxParser.parse(new File("useragents.xml"), handler);
+        saxParser.parse(new File(xmlConfig), handler);
 
     } catch (Exception e) {
         e.printStackTrace();
@@ -84,10 +85,34 @@ public class BurpExtender implements IBurpExtender, ISessionHandlingAction, ITab
     printOut = new PrintWriter(extCallbacks.getStdout(), true);
     printHeader();
     
-    /* Create the default User-Agent and then load the rest */
+    /* Create the default User-Agent */
     bUserAgents.add("Current Browser");
     bUserAgentNames.put("Current Browser", "Current Browser");
-    loadXML();
+    
+    /* Get the path to the extension to grab the useragents.xml file */
+    File extFile = new File(extCallbacks.getExtensionFilename());
+    String extPath = extFile.getParent();
+    File defaultConfig = new File(extPath + File.separator + configFile);
+    File backupConfig = new File(configFile);
+    
+    /* Load config from extension dir, burp dir, or create a few defaults */
+    if (defaultConfig.exists()) {
+        loadXML(extPath + File.separator + configFile);
+    } else if (backupConfig.exists()) {
+        loadXML(configFile);
+    } else {
+        bUserAgents.add("IE11");
+        bUserAgentNames.put("IE11", "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko");
+        bUserAgents.add("Firefox 36.0");
+        bUserAgentNames.put("Firefox 36.0", "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0");
+        bUserAgents.add("Chrome 41.0.2228.0");
+        bUserAgentNames.put("Chrome 41.0.2228.0", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+        bUserAgents.add("Safari 7 537.78.1 (OS X 10_9_5)");
+        bUserAgentNames.put("Safari 7 537.78.1 (OS X 10_9_5)", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.78.1 (KHTML like Gecko) Version/7.0.6 Safari/537.78.1");
+        printOut.println("No useragents.xml file found, loading defaults");
+        totalAgents = 4;
+    }
+
     printOut.println("Total Loaded Agents: " + String.valueOf(totalAgents));
     
     /* Create a tab to configure User-Agent header values */
