@@ -1,6 +1,6 @@
 /*
  * Name:           Burp UserAgent
- * Version:        0.4
+ * Version:        0.5
  * Date:           7/1/2015
  * Author:         Josh Berry - josh.berry@codewatch.org
  * Github:         https://github.com/codewatchorg/Burp-UserAgent
@@ -32,7 +32,7 @@ public class BurpExtender implements IBurpExtender, ISessionHandlingAction, ITab
   public IBurpExtenderCallbacks extCallbacks;
   public IExtensionHelpers extHelpers;
   public JPanel bUAPanel;
-  private static final String burpUAVersion = "0.4";
+  private static final String burpUAVersion = "0.5";
   private PrintWriter printOut;
   private String newUA = "Current Browser";
   private String configFile = "useragents.xml";
@@ -183,8 +183,10 @@ public class BurpExtender implements IBurpExtender, ISessionHandlingAction, ITab
       for (int i = 0; i < headers.size(); i++) {
         
         /* Set to the selected user-agent */
-        if (headers.get(i).startsWith("User-Agent:") && !headers.get(i).startsWith("User-Agent: " + newUA)) {                
+        if (headers.get(i).startsWith("User-Agent:") && !headers.get(i).startsWith("User-Agent: " + newUA)) {
           headers.set(i, "User-Agent: " + newUA);
+          uaInHeader = 1;
+        } else if (headers.get(i).startsWith("User-Agent: " + newUA)) {
           uaInHeader = 1;
         }
       }
